@@ -27,7 +27,7 @@ def read_root():
 async def run_script():
 
     # 외부 Python 스크립트 경로
-    script_path = "D:\parkjongho\OpenAI\Main\Main.py"
+    script_path = "C:\Users\WSU\Documents\GitHub\Caps\Main\Main.py"
     result = subprocess.run([sys.executable, script_path], capture_output=True, text=True, encoding='utf-8')
 
     # 실행 결과 반환
