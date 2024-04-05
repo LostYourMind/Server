@@ -3,7 +3,6 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 import subprocess
 import sys
-from DBControl import connect_db, disconnect_db, fetch_one
 
 # FastAPI 앱 인스턴스를 생성
 app = FastAPI()
@@ -17,22 +16,6 @@ app.add_middleware(
     allow_methods=["*"],  # 모든 HTTP 메소드를 허용
     allow_headers=["*"],  # 모든 헤더를 허용
 )
-
-@app.router.lifespan.on_event("startup")
-async def startup_event():
-    await connect_db()
-
-@app.router.lifespan.on_event("shutdown")
-async def shutdown_event():
-    await disconnect_db()
-
-@app.get("/users/{user_id}")
-async def read_user(user_id: int):
-    query = "SELECT * FROM users WHERE id = :user_id"
-    user = await fetch_one(query=query, values={"user_id": user_id})
-    if user is None:
-        raise HTTPException(status_code=404, detail="User not found")
-    return user
 
 
 #Main End Point
