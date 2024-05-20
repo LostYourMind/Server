@@ -9,6 +9,8 @@ from DBConn.DBControl import DataBaseControl
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from concurrent.futures import ThreadPoolExecutor
+from pydantic import BaseModel
+
 
 from API_CODE.Control.Main_Control import Control
 
@@ -75,27 +77,37 @@ def shutdown():
 
 #endregion
 
+
+class Message(BaseModel):
+    text: str
+    sender: str
+    # allergy: str = None  # 알레르기 정보 추가
+
+
 # #Test End Point
 @app.post("/users/ai")
-async def Menu_Recomm():
-    logger.info("/users/ai : Post Request Start")
+async def Menu_Recomm(message: Message):
+    
+    logger.info(f"/users/ai : Post Request Start\n")
+    logger.info(f"message : {message.text}")
 
-    #region 디버깅 코드
-    # script_path = r"C:\Users\WSU\Documents\GitHub\Caps\Main\Main.py"
-    # result = subprocess.run([sys.executable, script_path], capture_output=True, text=True, encoding='utf-8')
-    #endregion
+    # #region 디버깅 코드
+    # # script_path = r"C:\Users\WSU\Documents\GitHub\Caps\Main\Main.py"
+    # # result = subprocess.run([sys.executable, script_path], capture_output=True, text=True, encoding='utf-8')
+    # #endregion
 
     try:
-        result = control_Instance.Control_SrInput()
-        # 실행 결과 반환
-        if result.returncode == 0:  # 성공
-            logger.info({"output": result.stdout})
-            return {"output": result.stdout}
-
-        else:  # 실패
-            logger.error({"error": result.stderr})
-            return {"error": result.stderr}
+        result = control_Instance.Control_SrInput(message.text)
+        if isinstance(result, str) :
+            logger.info(f"/user/ai : {result}")
+            return {"message":result}
         
+        else : raise ValueError("Unexpected response format")
+
     except Exception as e :
         logger.error(f"An error occurred: {e}")
         raise HTTPException(status_code=500, detail=str(e))
+    
+
+
+    # return {"message": message.text} #ECHO용 코드

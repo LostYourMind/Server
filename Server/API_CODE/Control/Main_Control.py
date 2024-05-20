@@ -16,14 +16,15 @@ from API_CODE.Module import GPT_API
 class Control:
 
     # 음성 인식처리 & 추천 기능 함수 호출
-    def Control_SrInput(self):
-        temp = "점심 메뉴 추천해줘"
-        # temp = input("입력 : ")
-        if temp.endswith("설명해줘"):
+    def Control_SrInput(self, text):
+        temp = text
+        print(f"temp : {text}")
+        if temp.endswith("설명해줘."):
             call_GPT = Control.Call_Generate_Sentences(self, temp)
             return call_GPT
-        elif temp.endswith("추천해줘"):
+        elif temp.endswith("추천해줘."):
             # allergy_Info = input("알레르기 정보를 입력해주세요! : ")
+            print("추천해줘 파트")
             allergy_Info = "계란"
             call_GPT = Control.recom_Function(self, allergy_Info)
             return call_GPT
