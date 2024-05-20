@@ -76,26 +76,26 @@ def shutdown():
 #endregion
 
 # #Test End Point
-# @app.post("/users/ai")
-# async def Menu_Recomm():
-#     logger.info("/users/ai : Post Request Start")
+@app.post("/users/ai")
+async def Menu_Recomm():
+    logger.info("/users/ai : Post Request Start")
 
-#     #region 디버깅 코드
-#     # script_path = r"C:\Users\WSU\Documents\GitHub\Caps\Main\Main.py"
-#     # result = subprocess.run([sys.executable, script_path], capture_output=True, text=True, encoding='utf-8')
-#     #endregion
+    #region 디버깅 코드
+    # script_path = r"C:\Users\WSU\Documents\GitHub\Caps\Main\Main.py"
+    # result = subprocess.run([sys.executable, script_path], capture_output=True, text=True, encoding='utf-8')
+    #endregion
 
-#     try:
-#         result = control_Instance.Control_SrInput()
-#         # 실행 결과 반환
-#         if result.returncode == 0:  # 성공
-#             logger.info({"output": result.stdout})
-#             return {"output": result.stdout}
+    try:
+        result = control_Instance.Control_SrInput()
+        # 실행 결과 반환
+        if result.returncode == 0:  # 성공
+            logger.info({"output": result.stdout})
+            return {"output": result.stdout}
 
-#         else:  # 실패
-#             logger.error({"error": result.stderr})
-#             return {"error": result.stderr}
+        else:  # 실패
+            logger.error({"error": result.stderr})
+            return {"error": result.stderr}
         
-#     except Exception as e :
-#         logger.error(f"An error occurred: {e}")
-#         raise HTTPException(status_code=500, detail=str(e))
+    except Exception as e :
+        logger.error(f"An error occurred: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
