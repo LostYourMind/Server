@@ -15,24 +15,25 @@ from API_CODE.Module import GPT_API
 
 class Control:
 
+    def __init__(self, db_control):
+        self.db_control = db_control
+
     # 음성 인식처리 & 추천 기능 함수 호출
-    def Control_SrInput(self, text):
+    def Control_SrInput(self, text, kioskID):
         temp = text
         print(f"temp : {text}")
         if temp.endswith("설명해줘."):
             call_GPT = Control.Call_Generate_Sentences(self, temp)
             return call_GPT
         elif temp.endswith("추천해줘."):
-            # allergy_Info = input("알레르기 정보를 입력해주세요! : ")
-            print("추천해줘 파트")
             allergy_Info = "계란"
-            call_GPT = Control.recom_Function(self, allergy_Info)
+            call_GPT = Control.recom_Function(self, allergy_Info, kioskID)
             return call_GPT
         else:
-            print("테스트2")
+            return "잘못된 요청입니다"
 
     # 추천 기능 호출 함수
-    def recom_Function(self, allergy):
+    def recom_Function(self, allergy, kioskID):
         allergy_Info = ""
         if allergy.endswith("알레르기"):
             allergy_Info = allergy
@@ -40,8 +41,14 @@ class Control:
             temp = [allergy, "알레르기"]
             allergy_Info = " ".join(temp)
 
+        # try:
+        #     menuList = self.select_products_by_kiosk_id(kioskID)
+        # except Exception as ex:
+        #     print(f"Error fetching products: {ex}")
+        #     return "메뉴 데이터를 불러오는데 실패했습니다."
+
         call_GPT = GPT_API.USE_GPT()
-        return_value = call_GPT.Recomm_Menu(allergy_Info)
+        return_value = call_GPT.Recomm_Menu(allergy_Info, kioskID)
         return return_value
 
     # 답변 생성 기능 호출 함수

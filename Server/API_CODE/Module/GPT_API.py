@@ -1,6 +1,3 @@
-# GPT_API.py
-# GPT API를 활용한 코드들
-
 import openai
 import sys
 import io
@@ -9,6 +6,9 @@ from .weather_API import Weather
 from datetime import datetime
 import pytz
 
+sys.path.append('../')  # 상위 디렉터리 추가
+
+from DBConn.DBControl import DataBaseControl
 
 class USE_GPT:
     api_key = os.environ.get("OPENAI_API_KEY")
@@ -51,18 +51,26 @@ class USE_GPT:
         except Exception as ex:
             print("오류 발생 :", ex)
 
-    # 매뉴 추천 함수
-    def Recomm_Menu(self, allergy):
+    # 메뉴 추천 함수
+    def Recomm_Menu(self, allergy, kioskID):
+        db_control = DataBaseControl()
+        try:
+            menuList = db_control.select_products_by_kiosk_id(kioskID)
+        except Exception as ex:
+            print(f"Error fetching products: {ex}")
+            return "메뉴 데이터를 불러오는데 실패했습니다."
+
         # 현재 위치 날씨 데이터 Dict 타입으로 정의
         celsius, condition = Weather.weather_info()
         current_time = USE_GPT.Time_Z()
-        # #메뉴 추천 프롬프트
-        prompt = f"메뉴 추천 부탁할께, 현재 날씨는 {celsius}°C,{condition}이고, 현재 시간은{current_time}이야, {allergy}가 있어"
+        # 메뉴 추천 프롬프트
+        prompt = f"메뉴 추천 부탁할께, 현재 날씨는 {celsius}°C,{condition}이고, 현재 시간은 {current_time}이야, {allergy}가 있어"
         try:
             generated_text = USE_GPT.generate_chat(prompt)
             return generated_text
         except Exception as ex:
             print("오류 발생 : ", ex)
+            return "메뉴 추천을 생성하는데 실패했습니다."
 
     # Time_Zone 함수
     def Time_Z():
