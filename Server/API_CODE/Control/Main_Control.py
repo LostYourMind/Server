@@ -16,23 +16,20 @@ from API_CODE.Module import GPT_API
 class Control:
 
     # 음성 인식처리 & 추천 기능 함수 호출
-    def Control_SrInput(self, text):
+    def Control_SrInput(self, text, products):
         temp = text
-        print(f"temp : {text}")
         if temp.endswith("설명해줘."):
             call_GPT = Control.Call_Generate_Sentences(self, temp)
             return call_GPT
         elif temp.endswith("추천해줘."):
-            # allergy_Info = input("알레르기 정보를 입력해주세요! : ")
-            print("추천해줘 파트")
             allergy_Info = "계란"
-            call_GPT = Control.recom_Function(self, allergy_Info)
+            call_GPT = Control.recom_Function(self, allergy_Info, products)
             return call_GPT
         else:
-            print("테스트2")
+            return "테스트"
 
     # 추천 기능 호출 함수
-    def recom_Function(self, allergy):
+    def recom_Function(self, allergy, products):
         allergy_Info = ""
         if allergy.endswith("알레르기"):
             allergy_Info = allergy
@@ -41,7 +38,7 @@ class Control:
             allergy_Info = " ".join(temp)
 
         call_GPT = GPT_API.USE_GPT()
-        return_value = call_GPT.Recomm_Menu(allergy_Info)
+        return_value = call_GPT.Recomm_Menu(allergy_Info, products)
         return return_value
 
     # 답변 생성 기능 호출 함수
@@ -49,3 +46,4 @@ class Control:
         call_GPT = GPT_API.USE_GPT()
         result_value = call_GPT.generate_Sentences(prompt)
         return result_value
+    

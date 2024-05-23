@@ -9,6 +9,8 @@ from .weather_API import Weather
 from datetime import datetime
 import pytz
 
+current_dir = os.path.dirname(os.path.abspath(__file__))
+sys.path.append(current_dir)
 
 class USE_GPT:
     api_key = os.environ.get("OPENAI_API_KEY")
@@ -52,12 +54,13 @@ class USE_GPT:
             print("오류 발생 :", ex)
 
     # 매뉴 추천 함수
-    def Recomm_Menu(self, allergy):
+    def Recomm_Menu(self, allergy, products):
+        
         # 현재 위치 날씨 데이터 Dict 타입으로 정의
         celsius, condition = Weather.weather_info()
         current_time = USE_GPT.Time_Z()
         # #메뉴 추천 프롬프트
-        prompt = f"메뉴 추천 부탁할께, 현재 날씨는 {celsius}°C,{condition}이고, 현재 시간은{current_time}이야, {allergy}가 있어"
+        prompt = f"메뉴 추천 부탁할께, 메뉴는 {products} 가 있고 현재 날씨는 {celsius}°C,{condition}이고, 현재 시간은{current_time}이야, {allergy}가 있어"
         try:
             generated_text = USE_GPT.generate_chat(prompt)
             return generated_text
@@ -74,3 +77,4 @@ class USE_GPT:
         seconds = current_time_seoul.second
         temp = f"{hours}:{minutes}:{seconds}"
         return temp
+

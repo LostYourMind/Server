@@ -1,20 +1,23 @@
 import logging
 import sys
 import os
+import httpx
 
 sys.path.append('../')  # 상위 디렉터리 추가
+current_dir = os.path.dirname(os.path.abspath(__file__))
+sys.path.append(current_dir)
 
-from DBConn.DBControl import DataBaseControl
+from DB.database_session import get_db
+from DB.crud import call_select_all_kiosk
 
-from fastapi import FastAPI, HTTPException
+
+from fastapi import FastAPI, HTTPException, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from concurrent.futures import ThreadPoolExecutor
 from pydantic import BaseModel
 
-
+from API_CODE.DBControl.dbControl import get_db_control, dbControl
 from API_CODE.Control.Main_Control import Control
-
-test = DataBaseControl()
 
 
 #region Instance
@@ -30,12 +33,7 @@ control_Instance = Control()
 
 # 로깅 설정
 logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
-
-
-# 전역으로 재사용할 데이터베이스 연결 객체
-db_connection = None
-
+logger = logging.getLogger("Uvicorn")
 
 
 #endregion
@@ -54,12 +52,13 @@ app.add_middleware(
 
 #region Server startup & shutdown Code
 
+
 @app.on_event("startup")
-def startup():
+async def startup():
     global db_connection
     try:
         with ThreadPoolExecutor() as executor:
-            db_connection = executor.submit(test.connect_db).result()
+            db_connection = executor.submit(next, get_db()).result()
         if not db_connection:
             raise HTTPException(status_code=500, detail="Database connection failed")
         logger.info("데이터베이스 연결이 성공적으로 시작되었습니다.")
@@ -68,14 +67,15 @@ def startup():
         raise HTTPException(status_code=500, detail="Database connection failed")
 
 @app.on_event("shutdown")
-def shutdown():
+async def shutdown():
     global db_connection
     try:
-        with ThreadPoolExecutor() as executor:
-            executor.submit(test.disconnect_db)
+        db_connection.close()
         logger.info("데이터베이스 연결이 성공적으로 종료되었습니다.")
     except Exception as e:
         logger.error(f"데이터베이스 연결 종료 실패: {e}")
+
+
 
 #endregion
 
@@ -84,36 +84,33 @@ class Message(BaseModel):
     text: str
     sender: str
     id_Value : int
-    
     # allergy: str = None  # 알레르기 정보 추가
 
 
-# #Test End Point
+
+
 @app.post("/users/ai")
-async def Menu_Recomm(message: Message):
-    
+async def get_products(message: Message, db_control: dbControl = Depends(get_db_control)):
 
     logger.info(f"/users/ai : Post Request Start\n")
-    logger.info(f"message : {message.text}")
+    logger.info(f"KioskID : {message.id_Value} \nMessage : {message.text}")
 
-
-    temp = test.select_products_by_kiosk_id(3333)
-    return temp
-    # #region 디버깅 코드
-    # # script_path = r"C:\Users\WSU\Documents\GitHub\Caps\Main\Main.py"
-    # # result = subprocess.run([sys.executable, script_path], capture_output=True, text=True, encoding='utf-8')
-    # #endregion
-
-    # try:
-    #     result = control_Instance.Control_SrInput(message.text)
-    #     if isinstance(result, str) :
-    #         logger.info(f"/user/ai : {result}")
-    #         return {"message":result}
+    # KioskID를 가지고 해당 가게 키오스크 메뉴 정보 추출 후 문장 생성
+    try:
+        logger.info("Get Product Start...")
+        products = db_control.select_product(message.id_Value)
+        if products is None:
+            raise HTTPException(status_code=500, detail="Failed to fetch products")
         
-    #     else : raise ValueError("Unexpected response format")
+        result = control_Instance.Control_SrInput(message.text, products)
+        if isinstance(result, str) :
+            logger.info(f"/user/ai : {result}")
+            return {"message":result}
+        else : raise ValueError("Unexpected response format")
 
-    # except Exception as e :
-    #     logger.error(f"An error occurred: {e}")
-    #     raise HTTPException(status_code=500, detail=str(e))
-    
-    # return {"message": message.text} #ECHO용 코드
+    except Exception as e :
+        logger.error(f"An error occurred: {e}")
+        raise HTTPException(status_code=500, detail=str(e))    
+        
+        # return {"message": message.text} #ECHO용 코드
+
