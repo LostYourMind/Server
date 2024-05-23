@@ -92,6 +92,7 @@ class Message(BaseModel):
 @app.post("/users/ai")
 async def get_products(message: Message, db_control: dbControl = Depends(get_db_control)):
 
+    logger.info(f"KioskID {message.id_Value} text {message.text} sender {message.sender}")
     logger.info(f"/users/ai : Post Request Start\n")
     logger.info(f"KioskID : {message.id_Value} \nMessage : {message.text}")
 

@@ -15,9 +15,15 @@ from API_CODE.Module import GPT_API
 
 class Control:
 
+
+
     # 음성 인식처리 & 추천 기능 함수 호출
     def Control_SrInput(self, text, products):
+
+        keyword = "예산"
         temp = text
+
+
         if temp.endswith("설명해줘."):
             call_GPT = Control.Call_Generate_Sentences(self, temp)
             return call_GPT
@@ -25,6 +31,10 @@ class Control:
             allergy_Info = "계란"
             call_GPT = Control.recom_Function(self, allergy_Info, products)
             return call_GPT
+        elif keyword in temp:
+            call_GPT = Control.recom_Function_Budget(self, temp, products)
+            return call_GPT
+
         else:
             return "테스트"
 
@@ -39,6 +49,11 @@ class Control:
 
         call_GPT = GPT_API.USE_GPT()
         return_value = call_GPT.Recomm_Menu(allergy_Info, products)
+        return return_value
+    
+    def recom_Function_Budget(self, temp, products):
+        call_GPT = GPT_API.USE_GPT()
+        return_value = call_GPT.Recomm_Menu(temp, products)
         return return_value
 
     # 답변 생성 기능 호출 함수
