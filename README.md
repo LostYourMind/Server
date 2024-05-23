@@ -1,8 +1,13 @@
-FastAPI를 사용한 API 서버 개발
+uvicorn main:app --reload = 서버 구동
 
-1. 파이썬 스크립트 실행 -> result 값 resp | main.py{ run_script()메서드 }
-2. FastAPI -> DB Conn | DB/DataBaseDef.py & DBControl
+#외부 접근 가능한 서버 구동
+uvicorn main:app --host 0.0.0.0 --port 8000 
 
 
-🦔구현해야 할 내용🦔
-2. 받은 값 res로 넘기기
+https://www.weatherapi.com/my/fields.aspx
+https://platform.openai.com/usage
+
+
+
+pip install pymysql
+pip install httpx
