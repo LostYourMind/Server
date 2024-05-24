@@ -41,6 +41,8 @@ class Control:
 
             #클라이언트 측에서 데이터를 어떤 방식으로 ?
             
+            if temp in products :
+                return "테스트2"
 
             return "테스트"
         elif keyword in temp:

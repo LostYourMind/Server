@@ -102,7 +102,7 @@ async def get_products(message: Message, db_control: dbControl = Depends(get_db_
         products = db_control.select_product(message.id_Value)
         if products is None:
             raise HTTPException(status_code=500, detail="Failed to fetch products")
-        
+        logger.info(f"Product List : {products}")
         result = control_Instance.Control_SrInput(message.text, products)
         if isinstance(result, str) :
             logger.info(f"/user/ai : {result}")
