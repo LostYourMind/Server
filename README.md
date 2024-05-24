@@ -8,6 +8,11 @@ https://www.weatherapi.com/my/fields.aspx
 https://platform.openai.com/usage
 
 
-
-pip install pymysql
-pip install httpx
+pip list [
+    pip install fastapi
+    pip install pymysql
+    pip install httpx
+    pip install sqlalchemy
+    pip install openai==0.28
+    pip install pytz
+]

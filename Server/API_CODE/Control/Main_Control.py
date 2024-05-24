@@ -31,6 +31,18 @@ class Control:
             allergy_Info = "계란"
             call_GPT = Control.recom_Function(self, allergy_Info, products)
             return call_GPT
+        elif temp.endwith("장바구니에 담아줘.") : 
+
+            ### 만약 문장 종결문이 "장바구니에 담아줘." 라는 내용이 있으면 ###
+
+            # 사용자가 담고 싶어 하는 아이템이 DB Product 테이블에 존재 하는지 확인
+            # 있으면 해당 아이템을 products에서 추출 후 return , 클라이언트는 해당 아이템 장바구니에 담는 코드 생성
+            # 없으면 return 잘못된요청
+
+            #클라이언트 측에서 데이터를 어떤 방식으로 ?
+            
+
+            return "테스트"
         elif keyword in temp:
             call_GPT = Control.recom_Function_Budget(self, temp, products)
             return call_GPT
