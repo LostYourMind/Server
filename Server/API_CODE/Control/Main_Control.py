@@ -8,21 +8,18 @@ import os
 # sys.path.append(env_dir)  # Control 폴더가 있는 경로를 직접 추가
 
 
-sys.path.append('../')  # 상위 디렉터리 추가
+sys.path.append("../")  # 상위 디렉터리 추가
 
 from API_CODE.Module import GPT_API
 
 
 class Control:
 
-
-
     # 음성 인식처리 & 추천 기능 함수 호출
-    def Control_SrInput(self, text, products):
+    def Control_SrInput(self, text, products, id_Value):
 
         keyword = "예산"
         temp = text
-
 
         if temp.endswith("설명해줘."):
             call_GPT = Control.Call_Generate_Sentences(self, temp)
@@ -31,7 +28,7 @@ class Control:
             allergy_Info = "계란"
             call_GPT = Control.recom_Function(self, allergy_Info, products)
             return call_GPT
-        elif temp.endwith("장바구니에 담아줘.") : 
+        elif temp.endwith("장바구니에 담아줘."):
 
             ### 만약 문장 종결문이 "장바구니에 담아줘." 라는 내용이 있으면 ###
 
@@ -39,12 +36,13 @@ class Control:
             # 있으면 해당 아이템을 products에서 추출 후 return , 클라이언트는 해당 아이템 장바구니에 담는 코드 생성
             # 없으면 return 잘못된요청
 
-            #클라이언트 측에서 데이터를 어떤 방식으로 ?
-            
-            if temp in products :
+            # 클라이언트 측에서 데이터를 어떤 방식으로 ?
+
+            if temp in products:
                 return "테스트2"
 
             return "테스트"
+
         elif keyword in temp:
             call_GPT = Control.recom_Function_Budget(self, temp, products)
             return call_GPT
@@ -64,7 +62,7 @@ class Control:
         call_GPT = GPT_API.USE_GPT()
         return_value = call_GPT.Recomm_Menu(allergy_Info, products)
         return return_value
-    
+
     def recom_Function_Budget(self, temp, products):
         call_GPT = GPT_API.USE_GPT()
         return_value = call_GPT.Recomm_Menu(temp, products)
@@ -75,4 +73,3 @@ class Control:
         call_GPT = GPT_API.USE_GPT()
         result_value = call_GPT.generate_Sentences(prompt)
         return result_value
-    

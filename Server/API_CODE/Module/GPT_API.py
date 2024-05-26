@@ -12,8 +12,10 @@ import pytz
 current_dir = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(current_dir)
 
+
 class USE_GPT:
-    api_key = os.environ.get("OPENAI_API_KEY")
+    # api_key = os.environ.get("OPENAI_API_KEY")
+    api_key = "sk-proj-qqO4TTTXJgEMUBRxlRHKT3BlbkFJ6lRYi6RbSPdl8pBunDEk"
 
     openai.api_key = api_key
 
@@ -55,7 +57,7 @@ class USE_GPT:
 
     # 매뉴 추천 함수
     def Recomm_Menu(self, allergy, products):
-        
+
         # 현재 위치 날씨 데이터 Dict 타입으로 정의
         celsius, condition = Weather.weather_info()
         current_time = USE_GPT.Time_Z()
@@ -77,4 +79,3 @@ class USE_GPT:
         seconds = current_time_seoul.second
         temp = f"{hours}:{minutes}:{seconds}"
         return temp
-
