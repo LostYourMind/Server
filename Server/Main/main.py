@@ -2,7 +2,7 @@ import logging
 import sys
 import os
 import httpx
-from typing import List, Dict
+from typing import List, Dict, Optional
 
 sys.path.append("../")  # 상위 디렉터리 추가
 current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -20,7 +20,7 @@ from pydantic import BaseModel
 from API_CODE.DBControl.dbControl import get_db_control, dbControl
 from API_CODE.Control.Main_Control import Control
 from API_CODE.Module.PayMent import Payment_Class, PaymentRequest, PaymentResponse
-
+from API_CODE.DataModel.DataModels import Message, PaymentResponse, PaymentRequest, AddToCartRequest
 
 # region Instance
 
@@ -85,47 +85,9 @@ async def shutdown():
 # endregion
 
 
-# region Data Model
-
-
-class Message(BaseModel):
-    text: str
-    sender: str
-    id_Value: int
-    # allergy: str = None  # 알레르기 정보 추가
-
-
-# 결제 응답 데이터 모델
-class PaymentResponse(BaseModel):
-    message: str
-    success: bool
-    total_amount: int = 0
-
-
-class PaymentRequest(BaseModel):
-    user_id: int
-    action: str
-    paymentData: dict = None
-
-
-# 장바구니 기능
-class AddToCartRequest(BaseModel):
-    user_id: int
-    items: List[str]
-
-
-# 메모리에 장바구니 데이터를 저장할 딕셔너리
-cart_data: Dict[int, List[str]] = {}
-
-
-# endregion
-
 
 @app.post("/users/ai")
-async def get_products(
-    message: Message, db_control: dbControl = Depends(get_db_control)
-):
-
+async def get_products(message: Message, db_control: dbControl = Depends(get_db_control)):
     logger.info(
         f"KioskID {message.id_Value} text {message.text} sender {message.sender}"
     )
@@ -173,26 +135,11 @@ async def handle_payment_request(request: PaymentRequest):
 # 장바구니에 아이템을 추가하는 엔드포인트
 @app.post("/users/addToCart")
 async def add_to_cart(request: AddToCartRequest):
+    logger.info("/users/addToCart")
     user_id = request.user_id
     items = request.items
 
-    # 사용자 ID에 대한 장바구니가 없으면 새로 생성
-    if user_id not in cart_data:
-        cart_data[user_id] = []
+    result = control_Instance.Add_WishList(user_id, items)
 
-    # 장바구니에 아이템 추가
-    cart_data[user_id].extend(items)
+    return result
 
-    return {
-        "message": f"{', '.join(items)} 이(가) 장바구니에 추가되었습니다.",
-        "items": items,
-    }
-
-
-# 장바구니 데이터를 확인하는 엔드포인트 (디버깅용)
-@app.get("/users/{user_id}/cart")
-async def get_cart(user_id: int):
-    if user_id not in cart_data:
-        raise HTTPException(status_code=404, detail="Cart not found for user")
-
-    return {"user_id": user_id, "cart": cart_data[user_id]}

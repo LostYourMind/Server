@@ -11,6 +11,7 @@ import os
 sys.path.append("../")  # 상위 디렉터리 추가
 
 from API_CODE.Module import GPT_API
+from API_CODE.Module.WishList import WishList
 
 
 class Control:
@@ -24,24 +25,15 @@ class Control:
         if temp.endswith("설명해줘."):
             call_GPT = Control.Call_Generate_Sentences(self, temp)
             return call_GPT
+        
         elif temp.endswith("추천해줘."):
             allergy_Info = "계란"
             call_GPT = Control.recom_Function(self, allergy_Info, products)
             return call_GPT
-        elif temp.endwith("장바구니에 담아줘."):
-
-            ### 만약 문장 종결문이 "장바구니에 담아줘." 라는 내용이 있으면 ###
-
-            # 사용자가 담고 싶어 하는 아이템이 DB Product 테이블에 존재 하는지 확인
-            # 있으면 해당 아이템을 products에서 추출 후 return , 클라이언트는 해당 아이템 장바구니에 담는 코드 생성
-            # 없으면 return 잘못된요청
-
-            # 클라이언트 측에서 데이터를 어떤 방식으로 ?
-
-            if temp in products:
-                return "테스트2"
-
-            return "테스트"
+        
+        elif temp.endswith("담아줘."):
+  
+            return "가나다라마바사"
 
         elif keyword in temp:
             call_GPT = Control.recom_Function_Budget(self, temp, products)
@@ -63,6 +55,7 @@ class Control:
         return_value = call_GPT.Recomm_Menu(allergy_Info, products)
         return return_value
 
+    # 예산 기반 추천
     def recom_Function_Budget(self, temp, products):
         call_GPT = GPT_API.USE_GPT()
         return_value = call_GPT.Recomm_Menu(temp, products)
@@ -73,3 +66,8 @@ class Control:
         call_GPT = GPT_API.USE_GPT()
         result_value = call_GPT.generate_Sentences(prompt)
         return result_value
+
+    # 장바구니 추가 기능
+    def Add_WishList(self, user_id, items):
+        wishlist = WishList.checkWishlist(self, user_id, items)
+        return wishlist
