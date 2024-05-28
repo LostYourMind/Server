@@ -30,10 +30,6 @@ class Control:
             allergy_Info = "계란"
             call_GPT = Control.recom_Function(self, allergy_Info, products)
             return call_GPT
-        
-        elif temp.endswith("담아줘."):
-  
-            return "가나다라마바사"
 
         elif keyword in temp:
             call_GPT = Control.recom_Function_Budget(self, temp, products)
@@ -68,6 +64,6 @@ class Control:
         return result_value
 
     # 장바구니 추가 기능
-    def Add_WishList(self, user_id, items):
-        wishlist = WishList.checkWishlist(self, user_id, items)
+    def Add_WishList(self, user_id, items, product_List):
+        wishlist = WishList.checkWishlist(self, user_id, items, product_List)
         return wishlist

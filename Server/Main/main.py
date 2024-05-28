@@ -117,6 +117,24 @@ async def get_products(message: Message, db_control: dbControl = Depends(get_db_
         # return {"message": message.text} #ECHO용 코드
 
 
+# 장바구니에 아이템을 추가하는 엔드포인트
+@app.post("/users/addToCart")
+async def add_to_cart(request: AddToCartRequest, db_control = Depends(get_db_control)):
+    logger.info("/users/addToCart")
+    user_id = request.user_id
+    items = request.items
+
+    product_List = db_control.select_product(request.user_id)
+
+    result = control_Instance.Add_WishList(user_id, items, product_List)
+    logger.info(f"result value : {result}")
+    if(result == None):
+        raise HTTPException(status_code=404, detail=f"Product {items} not found")
+    else : 
+        return result
+
+
+# 결제 기능을 위한 엔드포인트
 @app.post("/users/paymentAPI")
 async def handle_payment_request(request: PaymentRequest):
     if not request.paymentData:
@@ -130,16 +148,3 @@ async def handle_payment_request(request: PaymentRequest):
         item_name=payment_data.get("item_name"),
         quantity=payment_data.get("quantity"),
     )
-
-
-# 장바구니에 아이템을 추가하는 엔드포인트
-@app.post("/users/addToCart")
-async def add_to_cart(request: AddToCartRequest):
-    logger.info("/users/addToCart")
-    user_id = request.user_id
-    items = request.items
-
-    result = control_Instance.Add_WishList(user_id, items)
-
-    return result
-
