@@ -20,7 +20,12 @@ from pydantic import BaseModel
 from API_CODE.DBControl.dbControl import get_db_control, dbControl
 from API_CODE.Control.Main_Control import Control
 from API_CODE.Module.PayMent import Payment_Class, PaymentRequest, PaymentResponse
-from API_CODE.DataModel.DataModels import Message, PaymentResponse, PaymentRequest, AddToCartRequest
+from API_CODE.DataModel.DataModels import (
+    Message,
+    PaymentResponse,
+    PaymentRequest,
+    AddToCartRequest,
+)
 
 # region Instance
 
@@ -85,9 +90,10 @@ async def shutdown():
 # endregion
 
 
-
 @app.post("/users/ai")
-async def get_products(message: Message, db_control: dbControl = Depends(get_db_control)):
+async def get_products(
+    message: Message, db_control: dbControl = Depends(get_db_control)
+):
     logger.info(
         f"KioskID {message.id_Value} text {message.text} sender {message.sender}"
     )
@@ -95,12 +101,30 @@ async def get_products(message: Message, db_control: dbControl = Depends(get_db_
     logger.info(f"KioskID : {message.id_Value} \nMessage : {message.text}")
 
     # KioskID를 가지고 해당 가게 키오스크 메뉴 정보 추출 후 문장 생성
+    # try:
+    #     logger.info("Get Product Start...")
+    #     products = db_control.select_product(message.id_Value)
+    #     if products is None:
+    #         raise HTTPException(status_code=500, detail="Failed to fetch products")
+    #     logger.info(f"Product List : {products}")
+    #     result = control_Instance.Control_SrInput(
+    #         message.text, products, message.id_Value
+    #     )
+    #     if isinstance(result, str):
+    #         logger.info(f"/user/ai : {result}")
+    #         return {"message": result}
+    #     else:
+    #         raise ValueError("Unexpected response format")
+
+    # except Exception as e:
+    #     logger.error(f"An error occurred: {e}")
+    #     raise HTTPException(status_code=500, detail=str(e))
+
+    # region 디버깅용 코드
+
     try:
         logger.info("Get Product Start...")
-        products = db_control.select_product(message.id_Value)
-        if products is None:
-            raise HTTPException(status_code=500, detail="Failed to fetch products")
-        logger.info(f"Product List : {products}")
+        products = None
         result = control_Instance.Control_SrInput(
             message.text, products, message.id_Value
         )
@@ -114,12 +138,13 @@ async def get_products(message: Message, db_control: dbControl = Depends(get_db_
         logger.error(f"An error occurred: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
-        # return {"message": message.text} #ECHO용 코드
+    # endregion
+    # return {"message": message.text}  # ECHO용 코드
 
 
 # 장바구니에 아이템을 추가하는 엔드포인트
 @app.post("/users/addToCart")
-async def add_to_cart(request: AddToCartRequest, db_control = Depends(get_db_control)):
+async def add_to_cart(request: AddToCartRequest, db_control=Depends(get_db_control)):
     logger.info("/users/addToCart")
     user_id = request.user_id
     items = request.items
@@ -128,9 +153,9 @@ async def add_to_cart(request: AddToCartRequest, db_control = Depends(get_db_con
 
     result = control_Instance.Add_WishList(user_id, items, product_List)
     logger.info(f"result value : {result}")
-    if(result == None):
+    if result == None:
         raise HTTPException(status_code=404, detail=f"Product {items} not found")
-    else : 
+    else:
         return result
 
 

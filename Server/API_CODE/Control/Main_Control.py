@@ -22,10 +22,10 @@ class Control:
         keyword = "예산"
         temp = text
 
-        if temp.endswith("설명해줘."):
+        if temp.endswith("설명해 줘"):
             call_GPT = Control.Call_Generate_Sentences(self, temp)
             return call_GPT
-        
+
         elif temp.endswith("추천해줘."):
             allergy_Info = "계란"
             call_GPT = Control.recom_Function(self, allergy_Info, products)
