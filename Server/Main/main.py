@@ -122,24 +122,24 @@ async def get_products(
 
     # region 디버깅용 코드
 
-    try:
-        logger.info("Get Product Start...")
-        products = None
-        result = control_Instance.Control_SrInput(
-            message.text, products, message.id_Value
-        )
-        if isinstance(result, str):
-            logger.info(f"/user/ai : {result}")
-            return {"message": result}
-        else:
-            raise ValueError("Unexpected response format")
+    # try:
+    #     logger.info("Get Product Start...")
+    #     products = None
+    #     result = control_Instance.Control_SrInput(
+    #         message.text, products, message.id_Value
+    #     )
+    #     if isinstance(result, str):
+    #         logger.info(f"/user/ai : {result}")
+    #         return {"message": result}
+    #     else:
+    #         raise ValueError("Unexpected response format")
 
-    except Exception as e:
-        logger.error(f"An error occurred: {e}")
-        raise HTTPException(status_code=500, detail=str(e))
+    # except Exception as e:
+    #     logger.error(f"An error occurred: {e}")
+    #     raise HTTPException(status_code=500, detail=str(e))
 
     # endregion
-    # return {"message": message.text}  # ECHO용 코드
+    return {"message": message.text}  # ECHO용 코드
 
 
 # 장바구니에 아이템을 추가하는 엔드포인트
