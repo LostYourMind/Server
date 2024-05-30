@@ -101,24 +101,24 @@ async def get_products(
     logger.info(f"KioskID : {message.id_Value} \nMessage : {message.text}")
 
     # KioskID를 가지고 해당 가게 키오스크 메뉴 정보 추출 후 문장 생성
-    # try:
-    #     logger.info("Get Product Start...")
-    #     products = db_control.select_product(message.id_Value)
-    #     if products is None:
-    #         raise HTTPException(status_code=500, detail="Failed to fetch products")
-    #     logger.info(f"Product List : {products}")
-    #     result = control_Instance.Control_SrInput(
-    #         message.text, products, message.id_Value
-    #     )
-    #     if isinstance(result, str):
-    #         logger.info(f"/user/ai : {result}")
-    #         return {"message": result}
-    #     else:
-    #         raise ValueError("Unexpected response format")
+    try:
+        logger.info("Get Product Start...")
+        products = db_control.select_product(message.id_Value)
+        if products is None:
+            raise HTTPException(status_code=500, detail="Failed to fetch products")
+        logger.info(f"Product List : {products}")
+        result = control_Instance.Control_SrInput(
+            message.text, products, message.id_Value
+        )
+        if isinstance(result, str):
+            logger.info(f"/user/ai : {result}")
+            return {"message": result}
+        else:
+            raise ValueError("Unexpected response format")
 
-    # except Exception as e:
-    #     logger.error(f"An error occurred: {e}")
-    #     raise HTTPException(status_code=500, detail=str(e))
+    except Exception as e:
+        logger.error(f"An error occurred: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
 
     # region 디버깅용 코드
 
@@ -139,7 +139,8 @@ async def get_products(
     #     raise HTTPException(status_code=500, detail=str(e))
 
     # endregion
-    return {"message": message.text}  # ECHO용 코드
+
+    #return {"message": message.text}  # ECHO용 코드
 
 
 # 장바구니에 아이템을 추가하는 엔드포인트

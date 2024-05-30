@@ -2,12 +2,6 @@
 # Module에 있는 코드를 사용하기 위한 호출 담당
 
 import sys
-import os
-
-# env_dir = os.environ.get("AI_CODE_DIR")
-# sys.path.append(env_dir)  # Control 폴더가 있는 경로를 직접 추가
-
-
 sys.path.append("../")  # 상위 디렉터리 추가
 
 from API_CODE.Module import GPT_API
@@ -18,25 +12,33 @@ class Control:
 
     # 음성 인식처리 & 추천 기능 함수 호출
     def Control_SrInput(self, text, products, id_Value):
-
         keyword = "예산"
         temp = text
 
-        if temp.endswith("설명해 줘"):
+        # 조건 리스트 정의
+        explanations = ["설명해 줘", "설명해 줘.", "알려 줘", "설명해 주세요"]
+        recommendations = ["추천해 줘", "추천해 줘.", "추천해 주세요", "추천 바래"]
+
+        # 설명 관련 조건 처리
+        if any(temp.endswith(phrase) for phrase in explanations):
             call_GPT = Control.Call_Generate_Sentences(self, temp)
             return call_GPT
 
-        elif temp.endswith("추천해줘."):
+        # 추천 관련 조건 처리
+        elif any(temp.endswith(phrase) for phrase in recommendations):
             allergy_Info = "계란"
             call_GPT = Control.recom_Function(self, allergy_Info, products)
             return call_GPT
 
+        # 예산 관련 조건 처리
         elif keyword in temp:
             call_GPT = Control.recom_Function_Budget(self, temp, products)
             return call_GPT
 
+        # 기타 조건 처리
         else:
             return "테스트"
+
 
     # 추천 기능 호출 함수
     def recom_Function(self, allergy, products):

@@ -15,7 +15,7 @@ sys.path.append(current_dir)
 
 class USE_GPT:
     # api_key = os.environ.get("OPENAI_API_KEY")
-    api_key = "sk-proj-qqO4TTTXJgEMUBRxlRHKT3BlbkFJ6lRYi6RbSPdl8pBunDEk"
+    api_key = "sk-proj-"
 
     openai.api_key = api_key
 

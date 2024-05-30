@@ -10,7 +10,7 @@ class Weather:
     def weather_info():
 
         # api_key = os.environ.get("WEATHER_API_KEY")]
-        api_key = "08682524e061471b87b64659240104"
+        api_key = ""
         LOCATION = "Daejeon"
 
         # WeatherAPI 날씨 예보 정보 조회 URL (현재 + 오늘의 최고/최저 기온 포함)
