@@ -1,6 +1,14 @@
-from fastapi import HTTPException
 import httpx
+
+from fastapi import HTTPException
 from pydantic import BaseModel
+
+
+# 결제 응답 데이터 모델
+class PaymentResponse(BaseModel):
+    message: str
+    success: bool
+    total_amount: int = 0
 
 
 class Payment_Class:

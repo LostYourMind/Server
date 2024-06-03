@@ -2,6 +2,7 @@
 # Module에 있는 코드를 사용하기 위한 호출 담당
 
 import sys
+
 sys.path.append("../")  # 상위 디렉터리 추가
 
 from API_CODE.Module import GPT_API
@@ -38,7 +39,6 @@ class Control:
         # 기타 조건 처리
         else:
             return "테스트"
-
 
     # 추천 기능 호출 함수
     def recom_Function(self, allergy, products):

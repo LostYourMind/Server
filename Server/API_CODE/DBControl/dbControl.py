@@ -15,6 +15,7 @@ sys.path.append(current_dir)
 from DB.database_session import get_db
 from DB.crud import call_select_all_kiosk
 
+
 class dbControl:
 
     def __init__(self, db: Session):
@@ -24,11 +25,22 @@ class dbControl:
         logger.info("Run : select_Product")
         try:
             result = call_select_all_kiosk(self.db, user_id)
-            keys = ['userId', 'user_name', 'kioskId', 'storeName', 'categoryName', 'product_name', 'price', 'image']
+            keys = [
+                "userId",
+                "user_name",
+                "kioskId",
+                "storeName",
+                "categoryName",
+                "product_name",
+                "price",
+                "image",
+            ]
 
             products = [
-                {"product_name": dict(zip(keys, row)).get("product_name"),
-                 "price": dict(zip(keys, row)).get("price")}
+                {
+                    "product_name": dict(zip(keys, row)).get("product_name"),
+                    "price": dict(zip(keys, row)).get("price"),
+                }
                 for row in result
             ]
 
