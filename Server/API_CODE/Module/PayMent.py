@@ -11,6 +11,13 @@ class PaymentResponse(BaseModel):
     total_amount: int = 0
 
 
+# 결제 요청 데이터 모델
+class PaymentRequest(BaseModel):
+    user_id: int
+    action: str
+    paymentData: dict = None
+
+
 class Payment_Class:
     def __init__(self, client_url):
         self.client_url = client_url
